@@ -1,0 +1,595 @@
+// input bits (from most significant to least)
+Input
+Store M21
+Input 
+Store M20
+Input 
+Store M19
+Input 
+Store M18
+Input 
+Store M17
+Input
+Store M15
+Input 
+Store M14
+Input 
+Store M13
+Input 
+Store M12
+Input 
+Store M11
+Input
+Store M10
+Input 
+Store M9
+Input 
+Store M7
+Input 
+Store M6
+Input 
+Store M5
+Input
+Store M3
+
+// Checks
+//P1	M3, M5, M7, M9, M11, M13, M15
+//P2	M3, M6, M7, M10, M11, M14, M15
+//P4	M5, M6, M7, M12, M13, M14, M15
+//P8	M9, M10, M11, M12, M13, M14, M15
+//P16	M17, M18, M19, M20, M21
+
+// prints initial message bits
+/checkBits, load M21
+/	Output
+/    Load M20
+/    Output
+/    Load M19
+/    Output
+/    Load M18
+/    Output
+/    Load M17
+/    Output
+/    Load M15
+/    Output 
+/    Load M14
+/    Output 
+/    Load M13
+/    Output 
+/    Load M12
+/    Output 
+/    Load M11
+/    Output
+/    Load M10
+/    Output 
+/    Load M9
+/    Output 
+/    Load M7
+/    Output 
+/    Load M6
+/    Output 
+/    Load M5
+/    Output
+/    Load M3
+/	Output
+
+// setting up XOR, by counting amount of 1s
+//P1	M3, M5, M7, M9, M11, M13, M15
+countOnesP1, load count1
+	Add M3
+    Store count1
+    
+    Load count1
+    Add M5
+    Store count1
+    
+    Load count1
+    Add M7
+    Store count1
+    
+    Load count1
+    Add M9
+    Store count1
+    
+    Load count1
+    Add M11
+    Store count1
+    
+    Load count1
+    Add M13
+    Store count1
+    
+    Load count1
+    Add M15
+    Store count1
+
+//P2	M3, M6, M7, M10, M11, M14, M15
+countOnesP2, load count2
+	Add M3
+    Store count2
+    
+    Load count2
+    Add M6
+    Store count2
+    
+    Load count2
+    Add M7
+    Store count2
+    
+    Load count2
+    Add M10
+    Store count2
+    
+    Load count2
+    Add M11
+    Store count2
+    
+    Load count2
+    Add M14
+    Store count2
+    
+    Load count2
+    Add M15
+    Store count2    
+    
+//P4	M5, M6, M7, M12, M13, M14, M15    
+countOnesP4, load count3
+	Add M5
+    Store count3
+    
+    Load count3
+    Add M6
+    Store count3
+    
+    Load count3
+    Add M7
+    Store count3
+    
+    Load count3
+    Add M12
+    Store count3
+    
+    Load count3
+    Add M13
+    Store count3
+    
+    Load count3
+    Add M14
+    Store count3
+    
+    Load count3
+    Add M15
+    Store count3      
+    
+//P8	M9, M10, M11, M12, M13, M14, M15    
+countOnesP8, load count4
+	Add M9
+    Store count4
+    
+    Load count4
+    Add M10
+    Store count4
+    
+    Load count4
+    Add M11
+    Store count4
+    
+    Load count4
+    Add M12
+    Store count4
+    
+    Load count4
+    Add M13
+    Store count4
+    
+    Load count4
+    Add M14
+    Store count4
+    
+    Load count4
+    Add M15
+    Store count4    
+    
+//P16	M17, M18, M19, M20, M21
+countOnesP16, load count5
+	Add M17
+    Store count5
+    
+    Load count5
+    Add M18
+    Store count5
+    
+    Load count5
+    Add M19
+    Store count5
+    
+    Load count5
+    Add M20
+    Store count5
+    
+    Load count5
+    Add M21
+    Store count5
+    
+// parity 1
+findP1, load count1 // finds if M is odd or even
+	Subt two
+    Store count1
+    Skipcond 800
+	Jump storeP1
+    Jump findP1
+
+storeP1, load count1 // if even, end, if odd, store 1
+	Skipcond 400
+    Jump oddP1
+    Jump findP2 // since default is 0, if it is even, no need to store 0 again
+
+oddP1, load one // stores 1
+	Store P1
+
+// parity 2
+findP2, load count2 // finds if M is odd or even
+	Subt two
+    Store count2
+    Skipcond 800
+	Jump storeP2
+    Jump findP2
+
+storeP2, load count2 // if even, end, if odd, store 1
+	Skipcond 400
+    Jump oddP2
+    Jump findP4 // since default is 0, if it is even, no need to store 0 again
+
+oddP2, load one // stores 1
+	Store P2
+
+// parity bit 4
+findP4, load count3 // finds if M is odd or even
+	Subt two
+    Store count3
+    Skipcond 800
+	Jump storeP4
+    Jump findP4
+
+storeP4, load M3 // if even, end, if odd, store 1
+	Skipcond 400
+    Jump oddP4
+    Jump findP8 // since default is 0, if it is even, no need to store 0 again
+
+oddP4, load one // stores 1
+	Store P4
+
+// parity 4
+findP8, load count4 // finds if M is odd or even
+	Subt two
+    Store count4
+    Skipcond 800
+	Jump storeP8
+    Jump findP8
+
+storeP8, load count4 // if even, end, if odd, store 1
+	Skipcond 400
+    Jump oddP8
+    Jump findP16 // since default is 0, if it is even, no need to store 0 again
+
+oddP8, load one // stores 1
+	Store P8
+
+// parity 5
+findP16, load count5 // finds if M is odd or even
+	Subt two
+    Store count5
+    Skipcond 800
+	Jump storeP16
+    Jump findP16
+
+storeP16, load count5 // if even, end, if odd, store 1
+	Skipcond 400
+    Jump oddP16
+    Jump parToDecP1 // since default is 0, if it is even, no need to store 0 again
+    
+oddP16, load one // stores 1
+	Store P16
+
+
+// P1 Add to count
+parToDecP1, load P1 
+	skipcond 400
+    Jump addP1
+    Jump parToDecP2
+
+addP1, load power0
+	Add count
+    Store count
+    
+// P2 Add to count    
+parToDecP2, load P2
+	skipcond 400
+    Jump addP2
+    Jump parToDecP4
+    
+addP2, load power1
+	Add count
+    Store count
+
+// P3 Add to count
+parToDecP4, load P4
+	skipcond 400
+    Jump addP4
+    Jump parToDecP8
+    
+addP4, load power2
+	Add count
+    Store count
+    
+// P4 Add to count
+parToDecP8, load P8
+	skipcond 400
+    Jump addP8
+    Jump parToDecP16
+    
+addP8, load power3
+	Add count
+    Store count
+    
+// P5 Add to count
+parToDecP16, load P16
+	skipcond 400
+    Jump addP16
+    Jump end
+    
+addP16, load power4
+	Add count
+    Store count
+    
+// DEC value of the initial value
+// if value = 0, skip to next power
+// if value = 1, add power to count
+// power 0
+mZero, load M3
+    Skipcond 400
+    Jump addMZero
+    Jump mOne
+
+addMZero, load mesCount
+	Add mpower0
+	Store mesCount
+
+// power 1
+mOne, load M5
+    Skipcond 400
+    Jump addMOne
+    Jump mTwo
+    
+addMOne, load mesCount
+	Add mpower1
+	Store mesCount
+
+// power 2
+mTwo, load M6
+    Skipcond 400
+    Jump addMTwo
+    Jump mThree
+
+addMTwo, load mesCount
+	Add mpower2
+	Store mesCount
+
+// power 3
+mThree, load M7
+    Skipcond 400
+    Jump addMThree
+    Jump mFour
+
+addMThree, load mesCount
+	Add mpower3
+	Store mesCount
+
+// power 4
+mFour, load M9
+    Skipcond 400
+    Jump addMFour
+    Jump mFive
+
+addMFour, load mesCount
+	Add mpower4
+	Store mesCount
+
+// power 5
+mFive, load M10
+    Skipcond 400
+    Jump addMFive
+    Jump mSix
+
+addMFive, load mesCount
+	Add mpower5
+    Store mesCount
+
+// power 6
+mSix, load M11
+	Skipcond 400
+    Jump addMSix
+    Jump mSeven
+
+addMSix, load mesCount
+	Add mpower6
+	Store mesCount
+    
+// power 7
+mSeven, load M12
+	Skipcond 400
+    Jump addMSeven
+    Jump mEight
+
+addMSeven, load mesCount
+	Add mpower7
+	Store mesCount
+
+// power 8
+mEight, load M13
+	Skipcond 400
+    Jump addMEight
+    Jump mNine
+
+addMEight, load mesCount
+	Add mpower8
+	Store mesCount
+    
+// power 9
+mNine, load M14
+	Skipcond 400
+    Jump addMNine
+    Jump mTen
+
+addMNine, load mesCount
+	Add mpower9
+	Store mesCount
+
+// power 10
+mTen, load M15
+	Skipcond 400
+    Jump addMTen
+    Jump mEleven
+
+addMTen, load mesCount
+	Add mpower10
+	Store mesCount
+
+// power 11
+mEleven, load M17
+	Skipcond 400
+    Jump addMEleven
+    Jump mTwelve
+
+addMEleven, load mesCount
+	Add mpower11
+	Store mesCount
+
+// power 12
+mTwelve, load M18
+	Skipcond 400
+    Jump addMTwelve
+    Jump mThirteen
+
+addMTwelve, load mesCount
+	Add mpower12
+	Store mesCount
+    
+// power 13    
+mThirteen, load M19
+	Skipcond 400
+    Jump addMThirteen
+    Jump mFourteen
+
+addMThirteen, load mesCount
+	Add mpower13
+	Store mesCount
+    
+// power 14
+mFourteen, load M20
+	Skipcond 400
+    Jump addMFourteen
+    Jump mFifteen
+
+addMFourteen, load mesCount
+	Add mpower14
+	Store mesCount
+    
+// power 15
+mFifteen, load M21
+	Skipcond 400
+    Jump addMFifteen
+    Jump mFourteen
+
+addMFifteen, load mesCount
+	Add mpower15
+	Store mesCount
+    Jump countOriginal
+
+// outputs value of the original message
+countOriginal, load mesCount
+	Output
+    Jump end
+
+end, load P1 // displays parity bits
+	Output
+    load P2
+    Output
+    load P4
+    Output
+    load P8
+    Output
+    load P16
+    Output
+    load count // displays parity bits in one line
+    Output
+    
+    Halt	
+    
+// 1010 1_010 1010_ 101_0_ _
+// P1 = 0
+// P2 = 1
+// P4 = 0
+// P8 = 1
+// P16 = 1
+// final value without parity: 43690
+
+count, DEC 0
+mesCount, DEC 0 // max = 65535
+two, DEC 2
+one, DEC 1
+count1, DEC 0
+count2, DEC 0
+count3, DEC 0
+count4, DEC 0
+count5, DEC 0
+
+// for the parity bits
+power0, DEC 1
+power1, DEC 2
+power2, DEC 4
+power3, DEC 8
+power4, DEC 16
+
+// declaration of parity bits
+P1, DEC 0
+P2, DEC 0
+P4, DEC 0
+P8, DEC 0
+P16, DEC 0
+
+// normal bits
+M3, DEC 0 // 1 p0
+M5, DEC 0 // 2 p1
+M6, DEC 0 // 3 p2
+M7, DEC 0 // 4 p3
+M9, DEC 0 // 5 p4
+M10, DEC 0 // 6 p5
+M11, DEC 0 // 7 p6
+M12, DEC 0 // 8 p7
+M13, DEC 0 // 9 p8
+M14, DEC 0 // 10 p9
+M15, DEC 0 // 11 p10 
+M17, DEC 0 // 12 p11
+M18, DEC 0 // 13 p12
+M19, DEC 0 // 14 p13
+M20, DEC 0 // 15 p14
+M21, DEC 0 // 16 p15
+
+// normal bit powers
+mpower0, DEC 1
+mpower1, DEC 2
+mpower2, DEC 4
+mpower3, DEC 8
+mpower4, DEC 16
+mpower5, DEC 32
+mpower6, DEC 64
+mpower7, DEC 128
+mpower8, DEC 256
+mpower9, DEC 512
+mpower10, DEC 1024
+mpower11, DEC 2048
+mpower12, DEC 4096
+mpower13, DEC 8192
+mpower14, DEC 16384
+mpower15, DEC 32768
