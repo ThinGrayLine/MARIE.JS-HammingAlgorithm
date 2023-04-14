@@ -71,7 +71,7 @@ Store M3
 /    Load M5
 /    Output
 /    Load M3
-/	Output
+/    Output
 
 // setting up XOR, by counting amount of 1s
 //P1	M3, M5, M7, M9, M11, M13, M15
@@ -257,7 +257,7 @@ storeP4, load M3 // if even, end, if odd, store 1
     Jump findP8 // since default is 0, if it is even, no need to store 0 again
 
 oddP4, load one // stores 1
-	Store P4
+    Store P4
 
 // parity 4
 findP8, load count4 // finds if M is odd or even
