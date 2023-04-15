@@ -218,7 +218,7 @@ findP4, load count3 // finds if M is odd or even
 	Jump storeP4
     Jump findP4
 
-storeP4, load M3 // if even, end, if odd, store 1
+storeP4, load count3 // if even, end, if odd, store 1
 	Skipcond 400
     Jump oddP4
     Jump findP8 // since default is 0, if it is even, no need to store 0 again
