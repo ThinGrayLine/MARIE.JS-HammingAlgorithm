@@ -41,7 +41,7 @@ Store M3
 //P16	M17, M18, M19, M20, M21
 
 // setting up XOR by counting amount of 1s
-//P1	M3, M5, M7, M9, M11, M13, M15
+//P1	M3, M5, M7, M9, M11, M13, M15, M17, M19, M21
 countOnesP1, load count1
 	Add M3
     Store count1
@@ -70,7 +70,19 @@ countOnesP1, load count1
     Add M15
     Store count1
 
-//P2	M3, M6, M7, M10, M11, M14, M15
+	Load count1
+    Add M17
+    Store count1
+    
+    Load count1
+    Add M19
+    Store count1
+    
+    Load count1
+    Add M21
+    Store count1
+
+//P2	M3, M6, M7, M10, M11, M14, M15, M18, M19
 countOnesP2, load count2
 	Add M3
     Store count2
@@ -97,9 +109,17 @@ countOnesP2, load count2
     
     Load count2
     Add M15
-    Store count2    
+    Store count2  
     
-//P4	M5, M6, M7, M12, M13, M14, M15    
+    Load count3
+    Add M18
+    Store count3
+    
+    Load count3
+    Add M19
+    Store count3   
+    
+//P4	M5, M6, M7, M12, M13, M14, M15, M20, M21    
 countOnesP4, load count3
 	Add M5
     Store count3
@@ -126,7 +146,15 @@ countOnesP4, load count3
     
     Load count3
     Add M15
-    Store count3      
+    Store count3   
+    
+    Load count3
+    Add M20
+    Store count3
+    
+    Load count3
+    Add M21
+    Store count3   
     
 //P8	M9, M10, M11, M12, M13, M14, M15    
 countOnesP8, load count4
@@ -156,6 +184,7 @@ countOnesP8, load count4
     Load count4
     Add M15
     Store count4    
+      
     
 //P16	M17, M18, M19, M20, M21
 countOnesP16, load count5
@@ -473,7 +502,8 @@ end, load M21
     load P1
     Output
     
-    Halt	
+    Halt
+    	
     
 // 1010 1_010 1010_ 101_0_ _
 // P1 = 0
