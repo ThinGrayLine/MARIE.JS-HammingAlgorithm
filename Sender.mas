@@ -1,4 +1,5 @@
 // input bits (from most significant to least)
+// stores bits that compose the message
 Input
 Store M21
 Input 
@@ -39,41 +40,7 @@ Store M3
 //P8	M9, M10, M11, M12, M13, M14, M15
 //P16	M17, M18, M19, M20, M21
 
-// prints initial message bits
-/checkBits, load M21
-/	Output
-/    Load M20
-/    Output
-/    Load M19
-/    Output
-/    Load M18
-/    Output
-/    Load M17
-/    Output
-/    Load M15
-/    Output 
-/    Load M14
-/    Output 
-/    Load M13
-/    Output 
-/    Load M12
-/    Output 
-/    Load M11
-/    Output
-/    Load M10
-/    Output 
-/    Load M9
-/    Output 
-/    Load M7
-/    Output 
-/    Load M6
-/    Output 
-/    Load M5
-/    Output
-/    Load M3
-/	Output
-
-// setting up XOR, by counting amount of 1s
+// setting up XOR by counting amount of 1s
 //P1	M3, M5, M7, M9, M11, M13, M15
 countOnesP1, load count1
 	Add M3
@@ -291,60 +258,11 @@ storeP16, load count5 // if even, end, if odd, store 1
 oddP16, load one // stores 1
 	Store P16
 
-
-// P1 Add to count
-/parToDecP1, load P1 
-/	skipcond 400
-/   Jump addP1
-/   Jump parToDecP2
-
-/addP1, load power0
-/	Add count
-/   Store count
-    
-// P2 Add to count    
-/parToDecP2, load P2
-/	skipcond 400
-/   Jump addP2
-/   Jump parToDecP4
-    
-/addP2, load power1
-/	Add count
-/   Store count
-
-// P3 Add to count
-/parToDecP4, load P4
-/	skipcond 400
-/   Jump addP4
-/   Jump parToDecP8
-    
-/addP4, load power2
-/	Add count
-/   Store count
-    
-// P4 Add to count
-/parToDecP8, load P8
-/	skipcond 400
-/   Jump addP8
-/   Jump parToDecP16
-    
-/addP8, load power3
-/	Add count
-/   Store count
-    
-// P5 Add to count
-/parToDecP16, load P16
-/	skipcond 400
-/   Jump addP16
-/   Jump end
-    
-/addP16, load power4
-/	Add count
-/   Store count
     
 // DEC value of the initial value
 // if value = 0, skip to next power
 // if value = 1, add power to count
+// doesn't go up to 20 because the parity bits are already accounted for
 // power 0
 mZero, load M3
     Skipcond 400
@@ -506,12 +424,13 @@ addMFifteen, load mesCount
 	Store mesCount
     Jump countOriginal
 
-// outputs value of the original message
+// outputs value of the original message (DEC has overflow, BIN outputs as expected)
 countOriginal, load mesCount
 	Output
     Jump end
 
-end, load M21 // Displays final message with parity bits
+// Displays the final message that is sent (with parity bits)
+end, load M21 
 	Output
     load M20
     Output
@@ -564,22 +483,15 @@ end, load M21 // Displays final message with parity bits
 // P16 = 1
 // final value without parity: 43690
 
-count, DEC 0
-mesCount, DEC 0 // max = 65535
-two, DEC 2
-one, DEC 1
-count1, DEC 0
-count2, DEC 0
-count3, DEC 0
-count4, DEC 0
-count5, DEC 0
-
-// for the parity bits
-/power0, DEC 1
-/power1, DEC 2
-/power2, DEC 4
-/power3, DEC 8
-/power4, DEC 16
+// Variable Declaration
+mesCount, DEC 0 // max = 65535 --> message count
+two, DEC 2 // used for handling faux division
+one, DEC 1 // to see if the bit is 1 or 0
+count1, DEC 0 // count of parity bits P1
+count2, DEC 0 // count of parity bits P2
+count3, DEC 0 // count of parity bits P4
+count4, DEC 0 // count of parity bits P8
+count5, DEC 0 // count of parity bits P16
 
 // declaration of parity bits
 P1, DEC 0
