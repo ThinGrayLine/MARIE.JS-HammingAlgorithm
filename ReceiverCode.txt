@@ -1,0 +1,657 @@
+// input bits (from most significant to least, including parity bits)
+Input
+Store M21
+Input 
+Store M20
+Input 
+Store M19
+Input 
+Store M18
+Input 
+Store M17
+Input
+Store P16
+Input 
+Store M15
+Input 
+Store M14
+Input 
+Store M13
+Input 
+Store M12
+Input
+Store M11
+Input 
+Store M10
+Input 
+Store M9
+Input 
+Store P8
+Input 
+Store M7
+Input
+Store M6
+Input
+Store M5
+Input
+Store P4
+Input
+Store M3
+Input
+Store P2
+Input
+Store P1
+//After taking all values, check for erroneous parity bits.
+//Checks
+// setting up XOR, by counting amount of 1s
+//P1    M3, M5, M7, M9, M11, M13, M15, M17, M19, M21
+countOnesP1, load count1
+    Add M3
+    Add M5
+    Add M7
+    Add M9
+    Add M11
+    Add M13
+    Add M15
+    Add M17
+    Add M19
+    Add M21
+    Store count1
+
+//P2    M3, M6, M7, M10, M11, M14, M15, M18, M19
+countOnesP2, load count2
+    Add M3
+    Add M6
+    Add M7
+    Add M10
+    Add M11
+    Add M14
+    Add M15
+    Add M18
+    Add M19
+    Store count2    
+    
+//P4    M5, M6, M7, M12, M13, M14, M15, M20, M21
+countOnesP4, load count4
+    Add M5
+    Add M6
+    Add M7
+    Add M12
+    Add M13
+    Add M14
+    Add M15
+    Add M20
+    Add M21
+    Store count4      
+    
+//P8    M9, M10, M11, M12, M13, M14, M15    
+countOnesP8, load count8
+    Add M9
+    Add M10
+    Add M11
+    Add M12
+    Add M13
+    Add M14
+    Add M15
+    Store count8   
+    
+//P16    M17, M18, M19, M20, M21
+countOnesP16, load count16
+    Add M17
+    Add M18
+    Add M19
+    Add M20
+    Add M21
+    Store count16
+    
+  // parity 1
+P1CheckOdd, load count1 // Sets sum of checkbits to 0 if even or -1 if odd.
+    Subt two
+    Store count1
+    Skipcond 800
+    Jump P1Positive
+    Jump P1CheckOdd
+    
+P1Positive, load count1
+	Skipcond 400 //If even (0) move on
+    load one //If odd (-1), set to 1
+    store count1
+
+P1Valid, load count1 // if even, end, if odd, store 1
+    Subt P1
+    Skipcond 400 //If value is 0, sum of checkbits and parity bit are the same, and no flag is necessary.
+    Jump FlagP1
+    Jump P2CheckOdd // since default is 0 (no flagged error), we can move on if parity and checkbit sum are both even/odd.
+
+FlagP1, load one // stores 1 in flag value, marking the parity bit to have caught an error.
+    Store Flag1
+    
+      // parity 2
+P2CheckOdd, load count2 // Sets sum of checkbits to 0 if even or -1 if odd.
+    Subt two
+    Store count2
+    Skipcond 800
+    Jump P2Positive
+    Jump P2CheckOdd
+    
+P2Positive, load count2
+	Skipcond 400 //If even (0) move on
+    load one//If odd (-1), set to 1
+    store count2
+
+P2Valid, load count2 // if even, end, if odd, store 1
+    Subt P2
+    Skipcond 400 //If value is 0, sum of checkbits and parity bit are the same, and no flag is necessary.
+    Jump FlagP2
+    Jump P4CheckOdd // since default is 0 (no flagged error), we can move on if parity and checkbit sum are both even/odd.
+
+FlagP2, load one // stores 1 in flag value, marking the parity bit to have caught an error.
+    Store Flag2
+    
+      // parity 4
+P4CheckOdd, load count4 // Sets sum of checkbits to 0 if even or -1 if odd.
+    Subt two
+    Store count4
+    Skipcond 800
+    Jump P4Positive
+    Jump P4CheckOdd
+    
+P4Positive, load count4
+	Skipcond 400 //If even (0) move on
+    load one //If odd (-1), set to 1
+    store count4
+
+P4Valid, load count4 // if even, end, if odd, store 1
+    Subt P4
+    Skipcond 400 //If value is 0, sum of checkbits and parity bit are the same, and no flag is necessary.
+    Jump FlagP4
+    Jump P8CheckOdd // since default is 0 (no flagged error), we can move on if parity and checkbit sum are both even/odd.
+
+FlagP4, load one // stores 1 in flag value, marking the parity bit to have caught an error.
+    Store Flag4
+    
+    // parity 8
+P8CheckOdd, load count8 // Sets sum of checkbits to 0 if even or -1 if odd.
+    Subt two
+    Store count8
+    Skipcond 800
+    Jump P8Positive
+    Jump P8CheckOdd
+    
+P8Positive, load count8
+	Skipcond 400 //If even (0) move on
+    load one //If odd (-1), set to 1
+    store count8
+
+P8Valid, load count8 // if even, end, if odd, store 1
+    Subt P8
+    Skipcond 400 //If value is 0, sum of checkbits and parity bit are the same, and no flag is necessary.
+    Jump FlagP8
+    Jump P16CheckOdd // since default is 0 (no flagged error), we can move on if parity and checkbit sum are both even/odd.
+
+FlagP8, load one // stores 1 in flag value, marking the parity bit to have caught an error.
+    Store Flag8
+    
+    // parity 16
+P16CheckOdd, load count16 // Sets sum of checkbits to 0 if even or -1 if odd.
+    Subt two
+    Store count16
+    Skipcond 800
+    Jump P16Positive
+    Jump P16CheckOdd
+    
+P16Positive, load count16
+	Skipcond 400 //If even (0) move on
+    load one //If odd (-1), set to 1
+    store count16
+
+P16Valid, load count16 // if even, end, if odd, store 1
+    Subt P16
+    Skipcond 400 //If value is 0, sum of checkbits and parity bit are the same, and no flag is necessary.
+    Jump FlagP16
+    Jump FinalOutput // No parity bits contain errors, no corrections are needed, move to output.
+
+FlagP16, load one // stores 1 in flag value, marking the parity bit to have caught an error.
+    Store Flag16
+    
+    //Using the values of FlagPX, every bit will be checked. More stringent bits will be checked first.
+    
+    //If M15 is incorrect Flag1, Flag2, Flag4 and Flag8 will have been flagged
+CheckM15, load Flag1
+	add Flag2
+    add Flag4
+    add Flag8
+	subt four
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM7 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM15
+    
+   //If M7 is incorrect Flag1, Flag2 and Flag 4 will have been flagged
+CheckM7, load Flag1
+	add Flag2
+    add Flag4
+	subt three
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM11 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM7
+    
+    //If M11 is incorrect Flag1, Flag2 and Flag8 will have been flagged
+CheckM11, load Flag1
+	add Flag2
+    add Flag8
+	subt three
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM13 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM11
+    
+    //If M13 is incorrect Flag1, Flag4 and Flag8 will have been flagged
+CheckM13, load Flag1
+    add Flag4
+    add Flag8
+	subt three
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM14 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM13
+    
+	//If M14 is incorrect Flag2, Flag4 and Flag8 will have been flagged
+CheckM14, load Flag2
+    add Flag4
+    add Flag8
+	subt three
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM19 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM14
+    
+    //If M19 is incorrect Flag1, Flag2, and Flag16 will have been flagged
+CheckM19, load Flag1
+	add Flag2
+	add Flag16
+	subt three
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM21 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM19
+    
+    //If M21 is incorrect Flag1, Flag4 and Flag16 will have been flagged
+CheckM21, load Flag1
+	add Flag4
+	add Flag16
+	subt three
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM3 // If non zero, all bits have been checked and none contain errors, move to output.
+    Jump CorrectM21
+    
+    //If M3 is incorrect, Flag1 and Flag2 will have been flagged
+CheckM3, load Flag1
+	add Flag2
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM5 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM3
+    
+    //If M5 is incorrect, Flag1 and Flag4 will have been flagged
+CheckM5, load Flag1
+	add Flag4
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM6 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM5
+    
+    //If M6 is incorrect, Flag2 and Flag4 will have been flagged
+CheckM6, load Flag2
+	add Flag4
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM9 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM6
+    
+    //If M9 is incorrect Flag1 and Flag8 will have been flagged
+CheckM9, load Flag1
+	add Flag8
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM10 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM9
+    
+    //If M10 is incorrect Flag2 and Flag8 will have been flagged
+CheckM10, load Flag2
+	add Flag8
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM12 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM10
+    
+	//If M12 is incorrect Flag4 and Flag8 will have been flagged
+CheckM12, load Flag4
+    add Flag8
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM17 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM12
+        
+    //If M17 is incorrect Flag1, and Flag16 will have been flagged
+CheckM17, load Flag1
+	add Flag16
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM18 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM17
+    
+    //If M18 is incorrect Flag2, and Flag16 will have been flagged
+CheckM18, load Flag2
+	add Flag16
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump CheckM20 // If non zero, this is not the bit in error, move on.
+    Jump CorrectM18
+    
+    //If M20 is incorrect Flag4 and Flag16 will have been flagged
+CheckM20, load Flag4
+	add Flag16
+	subt two
+    Skipcond 400 //If 0, all bits have been flagged, and this bit is in error.
+    Jump FinalOutput // If non zero, this is not the bit in error, move on.
+    Jump CorrectM20
+	
+    //Erroneous Bit Correction
+CorrectM3, load three
+	store ErrorBit
+	load M3
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M3 //Else, value is 1 and should be 0
+    Jump Set1M3
+Set1M3, load one
+	Store M3
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M3, load zero
+	Store M3
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM5, load five
+	store ErrorBit
+	load M5
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M5 //Else, value is 1 and should be 0
+    Jump Set1M5
+Set1M5, load one
+	Store M5
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M5, load zero
+	Store M5
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM6, load six
+	store ErrorBit
+	load M6
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M6 //Else, value is 1 and should be 0
+    Jump Set1M6
+Set1M6, load one
+	Store M6
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M6, load zero
+	Store M6
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM7, load seven
+	store ErrorBit
+	load M7
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M7 //Else, value is 1 and should be 0
+    Jump Set1M7
+Set1M7, load one
+	Store M7
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M7, load zero
+	Store M7
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM9, load nine
+	store ErrorBit
+	load M9
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M9 //Else, value is 1 and should be 0
+    Jump Set1M9
+Set1M9, load one
+	Store M9
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M9, load zero
+	Store M9
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM10, load ten
+	store ErrorBit
+	load M10
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M10 //Else, value is 1 and should be 0
+    Jump Set1M10
+Set1M10, load one
+	Store M10
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M10, load zero
+	Store M10
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM11, load eleven
+	store ErrorBit
+	load M11
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M11 //Else, value is 1 and should be 0
+    Jump Set1M11
+Set1M11, load one
+	Store M11
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M11, load zero
+	Store M11
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM12, load twelve
+	store ErrorBit
+	load M12
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M12 //Else, value is 1 and should be 0
+    Jump Set1M12
+Set1M12, load one
+	Store M12
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M12, load zero
+	Store M12
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM13, load thirteen
+	store ErrorBit
+	load M13
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M13 //Else, value is 1 and should be 0
+    Jump Set1M13
+Set1M13, load one
+	Store M13
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M13, load zero
+	Store M13
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM14, load fourteen
+	Store ErrorBit
+	load M14
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M14 //Else, value is 1 and should be 0
+    Jump Set1M14
+Set1M14, load one
+	Store M14
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M14, load zero
+	Store M14
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM15, load fifteen
+	store ErrorBit
+	load M15
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M15 //Else, value is 1 and should be 0
+    Jump Set1M15
+Set1M15, load one
+	Store M15
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M15, load zero
+	Store M15
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM17, load seventeen
+	store ErrorBit
+	load M17
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M17 //Else, value is 1 and should be 0
+    Jump Set1M17
+Set1M17, load one
+	Store M17
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M17, load zero
+	Store M17
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM18, load eighteen
+	store ErrorBit
+	load M18
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M18 //Else, value is 1 and should be 0
+    Jump Set1M18
+Set1M18, load one
+	Store M18
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M18, load zero
+	Store M18
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM19, load nineteen
+	Store ErrorBit
+	load M19
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M19 //Else, value is 1 and should be 0
+    Jump Set1M19
+Set1M19, load one
+	Store M19
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M19, load zero
+	Store M19
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM20, load twenty
+	store ErrorBit
+	load M20
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M20 //Else, value is 1 and should be 0
+    Jump Set1M20
+Set1M20, load one
+	Store M20
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M20, load zero
+	Store M20
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+CorrectM21, load twentyone
+	store ErrorBit
+	load M21
+	Skipcond 400 //If 0, value should be 1
+    Jump Set0M21 //Else, value is 1 and should be 0
+    Jump Set1M21
+Set1M21, load one
+	Store M21
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+Set0M21, load zero
+	Store M21
+	Jump FinalOutput //Having corrected the erroneous bit, move to output.
+    
+FinalOutput, load ErrorBit
+	output
+	load M21
+	output
+	load M20
+	output
+	load M19
+	output
+	load M18
+	output
+	load M17
+	output
+	load M15
+	output
+	load M14
+	output
+	load M13
+	output
+	load M12
+	output
+	load M11
+	output
+	load M10
+	output
+	load M9
+	output
+	load M7
+	output
+	load M6
+	output
+	load M5
+	output
+	load M3
+	output
+	halt
+//After outputting all message values, the transmission has been completed.
+//Instantiation of variables follows.
+//Input Bits
+P1, DEC 0
+P2, DEC 0
+M3, DEC 0
+P4, DEC 0
+M5, DEC 0
+M6, DEC 0
+M7, DEC 0
+P8, DEC 0
+M9, DEC 0
+M10, DEC 0
+M11, DEC 0
+M12, DEC 0
+M13, DEC 0
+M14, DEC 0
+M15, DEC 0
+P16, DEC 0
+M17, DEC 0
+M18, DEC 0
+M19, DEC 0
+M20, DEC 0
+M21, DEC 0
+//Counts for determining validity of parity bits
+count1, DEC 0
+count2, DEC 0
+count4, DEC 0
+count8, DEC 0
+count16, DEC 0
+//Decimal Numbers to be used in simple calculations
+zero, DEC 0
+one, DEC 1
+two, DEC 2
+three, DEC 3
+four, DEC 4
+five, DEC 5
+six, DEC 6
+seven, DEC 7
+nine, DEC 9
+ten, DEC 10
+eleven, DEC 11
+twelve, DEC 12
+thirteen, DEC 13
+fourteen, DEC 14
+fifteen, DEC 15
+seventeen, DEC 17
+eighteen, DEC 18
+nineteen, DEC 19
+twenty, DEC 20
+twentyone, DEC 21
+//Flags, determining which parity bits cover erroneous bits.
+Flag1, DEC 0
+Flag2, DEC 0
+Flag4, DEC 0
+Flag8, DEC 0
+Flag16, DEC 0
+//ErrorBit, storing the value of the corrected bit.
+ErrorBit, DEC 0
